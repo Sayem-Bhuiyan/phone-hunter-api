@@ -1,11 +1,11 @@
-const loadPhone = async (searchText) => {
+const loadPhone = async (searchText, isShowAll) => {
     const res = await fetch(`https://openapi.programming-hero.com/api/phones?search=${searchText}`);
     const data = await res.json();
     const phones =data.data;
-    displayPhone(phones)
+    displayPhone(phones, isShowAll)
 }
 
-const displayPhone = (phones) => {
+const displayPhone = (phones, isShowAll) => {
     const phoneContainer = document.getElementById('phone-container')
 
     // clear phoneContainer before adding phoneCard
@@ -13,15 +13,18 @@ const displayPhone = (phones) => {
 
     // display show all btn if there are more than 12 phone
     const showAllBtn = document.getElementById('show-all-btn');
-    if(phones.length > 12){
+    if(phones.length > 12 && !isShowAll){
         showAllBtn.classList.remove('hidden')
     }
     else{
         showAllBtn.classList.add('hidden')
     }
     
-    // show first 12 phone 
-    phones = phones.slice(0, 12)
+    // show first 12 phone  if not show all
+    if(!isShowAll){
+        phones = phones.slice(0, 12)
+    }
+    
 
 
     phones.forEach((phone) => {
@@ -36,7 +39,7 @@ const displayPhone = (phones) => {
             <h2 class="card-title">${phone_name}</h2>
             <p>If a dog chews shoes whose shoes does he choose?</p>
             <div class="card-actions justify-end">
-                <button class="btn btn-primary">Buy Now</button>
+                <button class="btn btn-primary">Show Details</button>
             </div>
             </div>
         `;
@@ -47,11 +50,11 @@ const displayPhone = (phones) => {
 }
 
 // handle search button
-const handleSearch = () => {
+const handleSearch = (isShowAll) => {
     const searchField = document.getElementById('search-field');
     const searchText = searchField.value;
     toggleLoadingSpinner(true);
-    loadPhone(searchText);
+    loadPhone(searchText, isShowAll);
 }
 
 
@@ -63,6 +66,10 @@ const toggleLoadingSpinner = (isLoading) => {
     else{
         loadingSpinner.classList.add('hidden')
     }
+}
+
+const handleShowAll = () => {
+    handleSearch(true)
 }
 
 // loadPhone()
